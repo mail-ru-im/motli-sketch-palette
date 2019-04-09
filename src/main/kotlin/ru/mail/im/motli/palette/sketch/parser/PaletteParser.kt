@@ -34,6 +34,7 @@ class PaletteParser(private val file: File) {
                 }
             }
         }
+        result.sortWith(Comparator { t1, t2 -> t1.name.compareTo(t2.name)})
         return result
     }
 
