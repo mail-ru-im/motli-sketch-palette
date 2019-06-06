@@ -1,9 +1,9 @@
 group 'ru.mail.im'
-version '0.0.1'
+version '0.0.2'
 
 buildscript {
     ext {
-        kotlinVersion = '1.2.51'
+        kotlinVersion = '1.3.31'
         shadowVersion = '4.0.4'
         gsonVersion = '2.8.4'
         junitVersion = '4.12'

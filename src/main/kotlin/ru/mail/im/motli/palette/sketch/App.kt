@@ -7,6 +7,7 @@ import java.io.File
 private const val ERROR_NO_ENOUGH_PARAMS = 1
 private const val ERROR_FILE_NOT_EXISTS = 2
 private const val ERROR_INVALID_PALETTE = 3
+private const val ERROR_UNKNOWN_ERROR = 100
 
 fun main(args: Array<String>) {
     if (args.size != 2) {
@@ -14,20 +15,25 @@ fun main(args: Array<String>) {
         System.exit(ERROR_NO_ENOUGH_PARAMS)
     }
 
-    val sketchFile = ensureExists(File(args[0]).absoluteFile)
-    println("Parsing palette from ${sketchFile.absolutePath}")
-    val paletteList = PaletteParser(sketchFile).parse()
+    try {
+        val sketchFile = ensureExists(File(args[0]).absoluteFile)
+        println("Parsing palette from ${sketchFile.absolutePath}")
+        val paletteList = PaletteParser(sketchFile).parse()
 
-    if (!PaletteValidator().validate(paletteList)) {
-        System.err.println("Palette is invalid")
-        System.exit(ERROR_INVALID_PALETTE)
+        if (!PaletteValidator().validate(paletteList)) {
+            System.err.println("Palette is invalid")
+            System.exit(ERROR_INVALID_PALETTE)
+        }
+
+        val outputFile = File(args[1]).absoluteFile
+        println("Writing palette to ${outputFile.absolutePath}")
+        PaletteWriterFactory.createWriter(1).write(paletteList, outputFile)
+
+        System.out.println("Done")
+    } catch (e: Exception) {
+        println("Unknown error $e")
+        System.exit(ERROR_UNKNOWN_ERROR)
     }
-
-    val outputFile = File(args[1]).absoluteFile
-    println("Writing palette to ${outputFile.absolutePath}")
-    PaletteWriterFactory.createWriter(1).write(paletteList, outputFile)
-
-    System.out.println("Done")
 }
 
 private fun ensureExists(file: File) : File {
